@@ -1,0 +1,114 @@
+<html>
+    <body>
+        <div id="timer">
+            00:00:000
+        </div>
+        <div id="timerRap">
+        </div>
+        <div id="timerButton">
+        <button id="timeStart">開始</button>
+        <button id="timeStop">停止</button>
+        <button id="timeReset">リセット</button>
+        <button id="timeRap">ラップ</button>
+        </div>
+    <script type="text/javascript">
+    const timeStart=document.getElementById('timeStart')
+    const timeStop=document.getElementById('timeStop')
+    const timeReset=document.getElementById('timeReset')
+    const timeRap=document.getElementById('timeRap')
+
+    //経過時間を保存する変数（単位:ミリ秒）
+    let storedTime
+    // スタートボタンを押したときのUnix Epoch
+    let startTime
+    // タイマーのID
+    let timerId
+    // 以前 stop したタイミングまでの計測時間
+    let timeToAdd = 0;
+    //経過時間を保存する(ラップ)
+    let sroredRapTime
+    // ラップボタンを押したときのUnix Epoch
+    let startRapTime
+    // タイマーのID（ラップ)
+    let timerRapId
+    // 以前 stop したタイミングまでの計測時間
+    let timeRapToAdd = 0;
+    
+    
+    const updateTimeText = () => {
+        // 1分 = 1000 ミリ秒 * 60秒 Math.floor()は引数に入れた数の最大の整数を返す
+  let minutes = Math.floor(storedTime / (1000 * 60));
+  // 1分に満たなかったミリ秒のうち，秒となったもの
+  let seconds = Math.floor((storedTime % (1000 * 60)) / 1000);
+  // 1秒に満たなかったもの
+  let miliseconds = storedTime % 1000;
+    
+    //ゼロパディングで０を加えて列を揃える　slice(開始位置,終了位置)でデータの一部分を抜き出す 例 slice(-2)で後ろから二つ取り出す
+    minutes = `0${minutes}`.slice(-2)
+    seconds = `0${seconds}`.slice(-2)
+    miliseconds = `00${miliseconds}`.slice(-3)
+    timer.textContent=`${minutes}:${seconds}:${miliseconds}`
+    }
+
+    //setTimeout 一定時間後に処理を開始する
+    const countUp = () => {
+        timerId = setTimeout(() => {
+    storedTime = Date.now() - startTime + timeToAdd;
+    updateTimeText();
+    countUp();
+  }, 10);
+    }
+    timeStart.addEventListener('click', Start, false)
+    timeStop.addEventListener('click', Stop, false)
+    timeReset.addEventListener('click', Reset, false)
+     function Start() {
+        console.log("aaa")
+        startTime = Date.now();
+        countUp();
+    }
+    function Stop() {
+        console.log("bbb")
+        clearTimeout(timerId);
+        timeToAdd += Date.now() - startTime;
+    }
+    function Reset() {
+        console.log("ccc")
+        storedTime = 0;
+        timeToAdd = 0;
+  // 00:00:000 を表示
+        updateTimeText();
+    }
+    const updateRapTimeText = () => {
+        // 1分 = 1000 ミリ秒 * 60秒 Math.floor()は引数に入れた数の最大の整数を返す
+  let minutesRap = Math.floor(storedRapTime / (1000 * 60));
+  // 1分に満たなかったミリ秒のうち，秒となったもの
+  let secondsRap = Math.floor((storedRapTime % (1000 * 60)) / 1000);
+  // 1秒に満たなかったもの
+  let milisecondsRap = storedRapTime % 1000;
+    
+    //ゼロパディングで０を加えて列を揃える　slice(開始位置,終了位置)でデータの一部分を抜き出す 例 slice(-2)で後ろから二つ取り出す
+    minutesRap = `0${minutesRap}`.slice(-2)
+    secondsRap = `0${secondsRap}`.slice(-2)
+    milisecondsRap = `00${milisecondsRap}`.slice(-3)
+    timerRap.textContent=`${minutesRap}:${secondsRap}:${milisecondsRap}`
+    }
+
+    //setTimeout 一定時間後に処理を開始する
+    const countRapUp = () => {
+        timerRapId = setTimeout(() => {
+    storedRapTime = Date.now() - startRapTime + timeRapToAdd;
+    updateRapTimeText();
+    countRapUp();
+  }, 10);
+    }
+   
+    timeRap.addEventListener('click', rap, false)
+     function rap() {
+        console.log("aaa")
+        startTime = Date.now();
+        countRapUp();
+    }
+
+    </script>
+    </body>
+</html>
