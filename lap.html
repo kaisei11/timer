@@ -1,0 +1,49 @@
+<html>
+    <body>
+        <div id="timerRap">
+            00:00:000
+        </div>
+        <div>
+        <button id="timeRap">ラップ</button>
+        </div>
+    <script type="text/javascript">
+    const timeRap=document.getElementById('timeRap')
+    //経過時間を保存する(ラップ)
+    let storedRapTime
+    // ラップボタンを押したときのUnix Epoch
+    let startRapTime
+    // タイマーのID（ラップ)
+    let timerRapId
+    // 以前 stop したタイミングまでの計測時間
+    let timeRapToAdd = 0;
+    const updateRapTimeText = () => {
+        // 1分 = 1000 ミリ秒 * 60秒 Math.floor()は引数に入れた数の最大の整数を返す
+        let minutesRap = Math.floor(storedRapTime / (1000 * 60));
+         // 1分に満たなかったミリ秒のうち，秒となったもの
+        let secondsRap = Math.floor((storedRapTime % (1000 * 60)) / 1000);
+        // 1秒に満たなかったもの
+        let milisecondsRap = storedRapTime % 1000;
+    
+        //ゼロパディングで０を加えて列を揃える　slice(開始位置,終了位置)でデータの一部分を抜き出す 例 slice(-2)で後ろから二つ取り出す
+        minutesRap = `0${minutesRap}`.slice(-2)
+        secondsRap = `0${secondsRap}`.slice(-2)
+        milisecondsRap = `00${milisecondsRap}`.slice(-3)
+        timerRap.textContent=`${minutesRap}:${secondsRap}:${milisecondsRap}`
+    }
+    //setTimeout 一定時間後に処理を開始する
+    const countRapUp = () => {
+        timerRapId = setTimeout(() => {
+        storedRapTime = Date.now() - startRapTime + timeRapToAdd;
+        updateRapTimeText();
+        countRapUp();
+        }, 10);
+    }
+    timeRap.addEventListener('click', rap, false)
+     function rap() {
+        console.log("aaa")
+        startRapTime = Date.now();
+        countRapUp();
+    }
+    </script>
+    </body>
+</html>
