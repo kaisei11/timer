@@ -1,0 +1,50 @@
+<html>
+    <body>
+        <div id="timer">
+            00:00:000
+        </div>
+        </div>
+        <div>
+        <button id="timeStart">開始</button>
+        </div>
+    <script type="text/javascript">
+    const timeStart=document.getElementById('timeStart')
+    //経過時間を保存する変数（単位:ミリ秒）
+    let storedTime
+    // スタートボタンを押したときのUnix Epoch
+    let startTime
+    // タイマーのID
+    let timerId
+    // 以前 stop したタイミングまでの計測時間
+    let timeToAdd = 0;
+    const updateTimeText = () => {
+        // 1分 = 1000 ミリ秒 * 60秒 Math.floor()は引数に入れた数の最大の整数を返す
+        let minutes = Math.floor(storedTime / (1000 * 60));
+        // 1分に満たなかったミリ秒のうち，秒となったもの
+        let seconds = Math.floor((storedTime % (1000 * 60)) / 1000);
+        // 1秒に満たなかったもの
+        let miliseconds = storedTime % 1000;
+    
+        //ゼロパディングで０を加えて列を揃える　slice(開始位置,終了位置)でデータの一部分を抜き出す 例 slice(-2)で後ろから二つ取り出す
+        minutes = `0${minutes}`.slice(-2)
+        seconds = `0${seconds}`.slice(-2)
+        miliseconds = `00${miliseconds}`.slice(-3)
+        timer.textContent=`${minutes}:${seconds}:${miliseconds}`
+    }
+    //setTimeout 一定時間後に処理を開始する
+    const countUp = () => {
+        timerId = setTimeout(() => {
+        storedTime = Date.now() - startTime + timeToAdd;
+        updateTimeText();
+        countUp();
+        }, 10);
+    }
+    timeStart.addEventListener('click', Start, false)
+    function Start() {
+        console.log("aaa")
+        startTime = Date.now();
+        countUp();
+    }
+    </script>
+    </body>
+</html>
