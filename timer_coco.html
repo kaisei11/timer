@@ -1,0 +1,105 @@
+<html>
+    <body>
+        <div id="timer">
+            00:00:000
+        </div>
+        <div id="timerLap">
+        </div>
+        <div>
+            <button id="timeStart">開始</button>
+            <button id="timeStop">停止</button>
+            <button id="timeLap">ラップ</button>
+            <button id="timeReset">リセット</button>
+        </div>
+        <div id="laps">
+        </div>
+    <script type="text/javascript">
+    const timer = document.getElementById('timer')
+    const timeStart = document.getElementById('timeStart')
+    const timeStop = document.getElementById('timeStop')
+    const timeLap = document.getElementById('timeLap')
+    const timeReset = document.getElementById('timeReset')
+
+    let time = 0
+    let timerId, isCounting
+    let lapedTimes = []
+
+    const countUp = () => {
+        isCounting = true
+        timerId = setInterval(() => {
+            time++
+            updateTimeText(time)
+        }, 10)
+    }
+
+    const start = () => {
+        if(isCounting) {
+            return
+        }
+        countUp()
+    }
+
+    const stop = () => {
+        if(!isCounting) {
+            return
+        }
+        isCounting = false
+        clearInterval(timerId)
+    }
+
+    const lap = () => {
+        lapedTimes.push(time)
+        updateLapText(lapedTimes)
+    }
+
+    const reset = () => {
+        stop()
+        time = 0
+        lapedTimes = []
+        updateTimeText(time)
+        updateLapText(lapedTimes) 
+    }
+
+    timeStart.addEventListener('click', start, false)
+
+    timeStop.addEventListener('click', stop, false)
+
+    timeLap.addEventListener('click', lap, false)
+
+    timeReset.addEventListener('click', reset, false)
+
+    function updateTimeText(time) {
+        if (time !== 0 && !time) {
+            console.error('lack of argument')
+            return
+        }
+        const timerDom = document.getElementById('timer')
+        const timeParams = calcTime(time)
+        timerDom.textContent=`${`0${timeParams.minutes}`.slice(-2)}:${`0${timeParams.seconds}`.slice(-2)}:${`0${timeParams.miliseconds}0`.slice(-3)}`
+    }
+
+    function updateLapText(laps) {
+        if(!laps instanceof Array) {
+            console.error('laps must be array')
+        }
+        const lapsDom = document.getElementById('laps')
+        lapsDom.innerHTML = ''
+        for (let i = 0; i < laps.length; i++) {
+            const val = laps[i]
+            const timeParams = calcTime(val)
+            const row = document.createElement('p')
+            row.textContent = `${i+1}回目: ${`0${timeParams.minutes}`.slice(-2)}:${`0${timeParams.seconds}`.slice(-2)}:${`0${timeParams.miliseconds}0`.slice(-3)}`
+            lapsDom.appendChild(row)
+        }
+    }
+
+    function calcTime(val) {
+        let timeParams = {}
+        timeParams.minutes = Math.floor(val/(60*100))
+        timeParams.miliseconds = val - timeParams.minutes*60*100
+        timeParams.seconds = Math.floor(timeParams.miliseconds/100)
+        return timeParams
+    }
+    </script>
+    </body>
+</html>
