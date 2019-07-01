@@ -17,31 +17,57 @@
     const timeStart=document.getElementById('timeStart')
     const timeStop=document.getElementById('timeStop')
     const timeReset=document.getElementById('timeReset')
+    
+    let bstart = document.getElementById("timeStart");
+    let bstop = document.getElementById("timeStop");
+    let breset = document.getElementById("timeReset");
+    let blap = document.getElementById("timeLap")
 
+    bstop.disabled = true;
+    breset.disabled = true;
+    blap.disabled = true;
+
+    function changeDisabled(){
+        if(bstart.disabled == false ){
+            bstart.disabled = true;  
+            bstop.disabled = false;
+            blap.disabled = false;
+            breset.disabled = true;
+        }   else if (bstop.disabled == false) {
+            bstop.disabled = true;
+            blap.disabled = true;
+            bstart.disabled = false;
+            breset.disabled = false;
+            }
+    }
+
+    bstart.addEventListener('click', changeDisabled, false)
+    bstop.addEventListener('click', changeDisabled, false)
+    
    
     let storedTime
     let startTime
     let timerId
     let timeToAdd = 0;
     
-    const updateTimeText = () => {
+    const updateTimeText = (data, name, num) => {
       
-        let minutes = Math.floor(storedTime / (1000 * 60));
+        let minutes = Math.floor(data / (1000 * 60));
 
-        let seconds = Math.floor((storedTime % (1000 * 60)) / 1000);
+        let seconds = Math.floor((data % (1000 * 60)) / 1000);
 
-        let miliseconds = storedTime % 1000;
+        let miliseconds = data % 1000;
     
         minutes = `0${minutes}`.slice(-2)
         seconds = `0${seconds}`.slice(-2)
         miliseconds = `00${miliseconds}`.slice(-3)
-        timer.textContent=`${minutes}:${seconds}:${miliseconds}`
+        name.textContent=`${num} ${minutes}:${seconds}:${miliseconds}`
     }
 
     const countUp = () => {
         timerId = setTimeout(() => {
         storedTime = Date.now() - startTime + timeToAdd;
-        updateTimeText();
+        updateTimeText(storedTime, timer, "");
         countUp();
         }, 10);
     }
@@ -56,21 +82,10 @@
 
     let i = 0;
 
-    const updateLapTimeText = () => {
-        let minutesLap = Math.floor(storedLapTime / (1000 * 60));
-        let secondsLap = Math.floor((storedLapTime % (1000 * 60)) / 1000);
-        let milisecondsLap = storedLapTime % 1000;
-
-        minutesLap = `0${minutesLap}`.slice(-2)
-        secondsLap = `0${secondsLap}`.slice(-2)
-        milisecondsLap = `00${milisecondsLap}`.slice(-3)
-        timerLap.textContent=`${minutesLap}:${secondsLap}:${milisecondsLap}`
-    }
-
     const countLapUp = () => {
         timerLapId = setTimeout(() => {
         storedLapTime = Date.now() - startLapTime + timeLapToAdd;
-        updateLapTimeText();
+        updateTimeText(storedLapTime, timerLap, "");
         countLapUp();
         }, 10);
     }
@@ -88,23 +103,16 @@
         lap.setAttribute("id", "lap");
 
         laplist.appendChild(lap);
-        timeLapToAdd += Date.now() - startLapTime;
+        let timeLapToAdd2 = timeLapToAdd + Date.now() - startLapTime;
         i = i+1
 
         let s = 0
-        s = timeLapToAdd-beforeTimeLapToAdd;
+        s = timeLapToAdd2-beforeTimeLapToAdd;
 
-        let minutes = Math.floor( s / (1000 * 60));
-        let seconds = Math.floor(( s % (1000 * 60)) / 1000);
-        let miliseconds = s % 1000;
+        updateTimeText(s,lap,"ラップ"+i)
 
-        minutes = `0${minutes}`.slice(-2)
-        seconds = `0${seconds}`.slice(-2)
-        miliseconds = `00${miliseconds}`.slice(-3)
-        
-        lap.textContent = `ラップ${i} ${minutes}:${seconds}:${miliseconds}`;
-        beforeTimeLapToAdd = timeLapToAdd
-        timeLapToAdd=0
+        beforeTimeLapToAdd = timeLapToAdd2
+        timeLapToAdd2=0
     }
 
     timeLap.addEventListener('click', funcLap, false)
@@ -124,10 +132,10 @@
     const Reset = () => {
         storedTime = 0;
         timeToAdd = 0;
-        updateTimeText();
+        updateTimeText(storedTime, timer, "");
         storedLapTime = 0;
         timeLapToAdd = 0;
-        updateLapTimeText();
+        updateTimeText(storedLapTime, timerLap, "");
     }
 
     timeLap.addEventListener('click', funcLap, false)
